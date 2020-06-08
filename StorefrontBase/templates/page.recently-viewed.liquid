@@ -1,0 +1,14 @@
+{%- layout none -%}
+{% capture recentlyViewed %}
+{%- assign products_handle = canonical_url | split: 'recently-viewed-products/' | last | split:'__pr=' -%}
+{%- assign products = products_handle[0] | split: '+' -%}
+{%- for handle_product in products -%}
+    {%- if handle_product != blank -%}
+		{%- unless handle_product == products_handle[1] -%}
+      		{%- assign product = all_products[handle_product] -%}
+          	<div class="grid__item">{%- if settings.product_latyout == "style6" -%}{%- include 'product-card-grid-columns' -%}{%- else -%}{%- include 'product-card-grid' -%}{%- endif -%}</div>
+		{%- endunless-%}
+	{%- endif-%}
+{%- endfor -%}
+{% endcapture %}
+{{ recentlyViewed | strip_newlines | remove: "  " | remove: "	" }}

@@ -1,0 +1,80 @@
+{% if section.settings.show_category %}
+  {% if blog.all_tags.size > 0 %}
+    <div class="sidebar_widget">
+      <div class="widget-title">
+        {{ section.settings.category_box_title }}
+      </div>
+      <div class="widget-content">  
+        <ul class="no-bullets blog-category">
+          {% for tag in blog.all_tags %}
+          {% if current_tags contains tag %}
+          <li>{{ tag }}</li>
+          {% else %}
+          <li>{{ tag | link_to_tag: tag }}</li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  {% endif %}
+{% endif %} 
+
+{% if section.settings.show_recent_posts %}
+<div class="sidebar_widget">
+  <div class="widget-title">
+    {{ section.settings.recent_posts_title }}
+  </div>
+  <div class="widget-content"> 
+    <ul class="no-bullets sidebar-blog-post">
+      {% for article in blogs[blog.handle].articles limit:5 %}
+      <li class="clearfix"> <a href="{{ article.url }}" class="article-img"> {{ article | img_url: '70x70',crop:'top'  | img_tag: article.title }} </a>
+        <div class="article-detail"> <a href="{{ article.url }}" class="article-name">{{ article.title }}</a> <span class="article__date"> {{ article.published_at | time_tag: format: 'month_day_year' }} </span> </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endif %} 
+
+{% if section.settings.show_banner_ad %}
+{% if section.settings.sidebar_banner == blank %}
+<p>Please upload banner from store admin blog pages</p>
+{% else %}		
+<p> 
+  {% if section.settings.banner_link != blank %}
+  <a href="{{ section.settings.banner_link }}"> 
+    {% endif %}
+    <img src="{{ section.settings.sidebar_banner |  img_url:'master' }}" alt="" /> 
+    {% if section.settings.banner_link != blank %}
+  </a>
+  {% endif %}
+</p>
+{% endif %} 
+{% endif %} 
+
+{% if section.settings.show_products %}
+<div class="sidebar_widget">
+  <div class="widget-title">
+    {{ section.settings.collection_title }}
+  </div>
+  <div class="widget-content"> 
+    {% if section.settings.sidebar_collection != blank %}
+    <div class="list">
+      <ul class="grid-products sidebar-products">
+        {% for product in collections[section.settings.sidebar_collection].products limit:section.settings.number_of_prodcut %}
+        <li class="clearfix"> <a class="grid-view-item__link" href="{{ product.url | within: collection }}"> <img class="grid-view-item__image" src="{{ product.featured_image.src | img_url: '70x70',crop:'center' }}" alt="{{ product.featured_image.alt }}"> </a>
+          <div class="product-short-detail">
+            <a class="item-title" href="{{ product.url | within: collection }}">{{ product.title }}</a>
+            {% include 'product-price' %} </div>
+        </li>
+        {% endfor %}
+      </ul>			
+    </div>
+    {% else %}
+    <p>Please select collection from store admin blog pages</p>
+    {% endif %} 
+  </div>
+</div>
+{% endif %} 
+
+

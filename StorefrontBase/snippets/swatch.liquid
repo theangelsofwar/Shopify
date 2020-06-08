@@ -1,0 +1,61 @@
+{% capture colorSwatches %}
+
+{% assign found_option = false %}
+{% assign is_color = false %}
+{% assign is_size = false %}
+{% assign option_index = 0 %}
+
+{% for option in product.options %}
+    {% if option == swatch %}
+      {% assign found_option = true %}
+      {% assign option_index = forloop.index0 %}
+      {% assign downcased_option = swatch | downcase %}
+      {% if downcased_option contains 'color' or downcased_option contains 'colour' %}
+        {% assign is_color = true %}
+      {% endif %}
+	{% if downcased_option contains 'size' %}
+        {% assign is_size = true %}
+      {% endif %}
+    {% endif %}
+{% endfor %}
+
+<div class="swatch clearfix option{{option_index |plus: 1}}" data-option-index="{{ option_index }}">
+  <div class="product-form__item">
+    <label class="header">{{ swatch }}: <span class="slVariant"></span>      
+      {% if settings.sizechart_link %}
+        {% if is_size %}
+        	<a href="#sizechart" class="mfp sizelink" data-effect="mfp-zoom-in" ><i class="ad ad-ruler"></i> {{ 'products.product.size_chart' | t}}</a>
+        {% endif %} 
+      {% endif %}                                   
+    </label>
+    {% assign values = '' %}
+    {% for variant in product.variants %}
+      {% assign value = variant.options[option_index] %}
+      {% unless values contains value %}
+        {% assign values = values | join: ',' %}
+        {% assign values = values | append: ',' | append: value %} 
+        {% assign values = values | split: ',' %}
+        {% assign colorname = value | handleize %}
+          <div data-value="{{ value | escape }}" class="swatch-element{% unless variant.available %} soldout{% endunless %}">
+            <input class="swatchInput" id="{{product.id}}-{{ option_index }}-{{ value | handle }}" data-var="{{ value | handle }}" type="radio" name="option-{{ option_index }}" value="{{ value | escape }}"{% if option.selected_value == value %} checked{% endif %} />
+            {% if is_color %}
+            {% if settings.sw_color_type == "color" %}
+            <label class="swatchLbl color {{settings.sw_color_size}} {{settings.sw_color_style}} swt{{value | handle}}" for="{{product.id}}-{{ option_index }}-{{ value | handle }}" style="background-color:{{ value | handle }};"></label>
+            <span class="tooltip-label">{{ value }}</span>
+            {% else %}
+            <label class="swatchLbl lazyload color {{settings.sw_color_size}} {{settings.sw_color_style}}" for="{{product.id}}-{{ option_index }}-{{ value | handle }}"
+                   data-bgset="{% include 'swatch-bg', image: variant.image %}" data-sizes="auto" data-parent-fit="contain"
+                   style="background-image:url({{ 'spacer.png' | asset_img_url: 'master' }});"></label>
+            <span class="tooltip-label">{{ value }}</span>
+            {% endif %}
+            {% else %}
+            <label class="swatchLbl size {{settings.sw_color_style}}{% if settings.var_style %} square-only{% endif %}" for="{{product.id}}-{{ option_index }}-{{ value | handle }}">{{ value }}</label>            	
+            {% endif %}
+          </div>
+      {% endunless %}
+    {% endfor %}
+  </div>
+</div>
+
+{% endcapture %}
+{{colorSwatches | strip_newlines | remove: "  " | remove: "	" }}

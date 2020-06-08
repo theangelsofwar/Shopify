@@ -1,0 +1,171 @@
+{%- capture relatedProducts -%}
+
+{% if section.settings.show_related_products == true %}
+
+{% case section.settings.grid %}
+  {% when 3 %}{%- assign grid_ds = 'large-up--one-third' -%}
+  {% when 4 %}{%- assign grid_ds = 'large-up--one-quarter' -%}
+  {% when 5 %}{%- assign grid_ds = 'large--one-quarter widescreen--one-fifth' -%}
+  {% when 6 %}{%- assign grid_ds = 'large--one-fifth widescreen--one-sixth' -%}
+  {% when 7 %}{%- assign grid_ds = 'large--one-fifth widescreen--one-seventh' -%}
+{% endcase %}
+
+{% case section.settings.tablet-grid %}
+  {% when 2 %}{%- assign grid_tb = 'medium--one-half' -%}
+  {% when 3 %}{%- assign grid_tb = 'medium--one-third' -%}
+  {% when 4 %}{%- assign grid_tb = 'medium--one-quarter' -%}
+  {% when 5 %}{%- assign grid_tb = 'medium--one-fifth' -%}
+{% endcase %}
+
+{% case section.settings.mobile-grid %}
+  {% when 1 %}{%- assign grid_mb = 'small--one-whole' -%}
+  {% when 2 %}{%- assign grid_mb = 'small--one-half' -%}
+  {% when 3 %}{%- assign grid_mb = 'small--one-third' -%}
+{% endcase %}
+
+<div class="related-product" id="{{ section.id }}" data-section-id="{{ section.id }}" data-section-type="carousel">
+  <div class="{% if settings.product_latyout != "style6" %}page-width{% if settings.product_fullwidth %} fullwidth{% endif %}{% endif %}">
+    {% assign number_of_related_products_per_row = section.settings.related_grid_num %}
+	{% assign number_of_rows = section.settings.related_total_product_to_show | plus:1 %}
+	
+	{% assign same_vendor = false %}
+	{% assign same_type = false %}
+	
+	{% assign exclusions = 'frontpage,all' | split: ',' %}
+	
+	{% if product.metafields.c_f['Related Products'] %}
+	{% assign collection = collections[product.metafields.c_f['Related Products']] %}
+	{% endif %}
+	
+	{% assign found_a_collection = false %}
+    {% if collection and collection.all_products_count > 1 %}
+        {% unless exclusions contains collection.handle %}
+        {% assign found_a_collection = true %}
+        {% endunless %}
+      {% endif %}
+      {% unless found_a_collection %}
+        {% for c in product.collections limit: number_of_rows %}
+          {% unless exclusions contains c.handle or c.all_products_count < 2 %}
+          {% assign found_a_collection = true %}
+          {% assign collection = c %}
+          {% break %}
+          {% endunless %}
+        {% endfor %}
+      {% endunless %}
+
+	{% if found_a_collection %}
+      {% assign current_product = product %}
+      {%- capture related_items -%}
+    	{%- if settings.product_latyout == "style6" -%}
+          <div id="productSlider-{{ section.id }}" class="grid grid--uniform collection-columns">
+            {% for product in collection.products limit : number_of_rows %}
+              {% unless product.handle == current_product.handle %}
+                  {% unless same_vendor and current_product.vendor != product.vendor %}
+                      {% unless same_type and current_product.type != product.type %}
+                          <div class="grid__item medium--one-half">{% include 'product-card-grid-columns' %}</div>
+                      {% endunless %}
+                  {% endunless %}
+              {% endunless %}
+            {% endfor %}
+          </div>
+    	{%- else -%}
+    	  <div id="productSlider-{{ section.id }}" class="grid-products carousel" {% if settings.product_latyout != "style6" %}data-slick='{"slidesToShow": {{ section.settings.grid }},"slidesToScroll": 1, {%- if settings.rtl -%}"rtl": true,{%- endif -%} "infinite": true, "responsive":[{"breakpoint": 1024,"settings":{"slidesToShow": {{ section.settings.tablet-grid }} }},{"breakpoint": 767,"settings":{"slidesToShow":{{ section.settings.mobile-grid }} }} ]}'{% endif %}>
+            {% for product in collection.products limit : number_of_rows %}
+              {% unless product.handle == current_product.handle %}
+                  {% unless same_vendor and current_product.vendor != product.vendor %}
+                      {% unless same_type and current_product.type != product.type %}
+                          <div class="grid__item {{ grid_mb }} {{ grid_tb }} {{grid_ds}}">{% include 'product-card-grid', grid_image_width: image_size %}</div>
+                      {% endunless %}
+                  {% endunless %}
+              {% endunless %}
+            {% endfor %}
+          </div>
+    	{%- endif -%}
+      {%- endcapture -%}
+
+      {% assign related_items = related_items | trim %}
+
+      {% unless related_items == blank %}
+        {% unless section.settings.related_title == blank %}
+           <div class="sec-ttl {{ settings.title_align}}">
+              <h3 class="h3">{{ section.settings.related_title | escape }}</h3>
+                 {%- if section.settings.related_sub_title != blank -%}<span>{{section.settings.related_sub_title}}</span>{%- endif -%}        
+              </div> 
+       	{% endunless %}
+    	<div id="products-{{ section.id }}">{{ related_items }}</div>
+      {% endunless %}  
+	{% endif %} 
+  </div>
+</div>
+{% endif %}
+{%- endcapture -%}
+{{ relatedProducts | strip_newlines | remove: "  " | remove: "	" }}
+
+{% schema %}
+  {
+    "name": "Related Products",
+    "settings": [
+		{
+        "type": "checkbox",
+        "id": "show_related_products",
+        "label": "Show related products",
+        "default": true
+      },
+	 {
+        "type": "checkbox",
+        "id": "related_products_autoplay",
+        "label": "Carousel Autoplay",
+        "default": true
+      },
+ 	 {
+        "id": "related_title",
+        "type": "text",
+        "label": "Section Title",
+        "default": "Related Products"
+      },
+ 	  {
+        "id": "related_sub_title",
+        "type": "text",
+        "label": "Section Sub title",
+        "default": "You can stop autoplay, increase/decrease aniamtion speed and number of grid to show and products from store admin."
+      },
+      {
+        "type": "paragraph",
+        "content": "Products Per Row"
+      },
+      {
+        "type": "range",
+        "id": "grid",
+        "label": "Desktop",
+        "default": 4,
+        "min": 2,
+        "max": 7,
+        "step": 1
+      },
+      {
+        "type": "range",
+        "id": "tablet-grid",
+        "label": "Tablet",
+        "default": 3,
+        "min": 2,
+        "max": 5,
+        "step": 1
+      },
+      {
+        "type": "range",
+        "id": "mobile-grid",
+        "label": "Mobile",
+        "default": 2,
+        "min": 1,
+        "max": 3,
+        "step": 1
+      },
+      {
+        "type": "text",
+        "id": "related_total_product_to_show",
+        "label": "Number of Product to Show",
+        "default": "8"        
+      }
+	]
+  }
+{% endschema %}

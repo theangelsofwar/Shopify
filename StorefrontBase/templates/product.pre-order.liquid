@@ -1,0 +1,94 @@
+{%- if settings.breadcrumb_pr -%}{%- include 'breadcrumb' -%}{%- else -%}<div class="topSpace"></div>{%- endif -%}
+{% section 'product-template' %}
+
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org/",
+  "@type": "Product",
+  "name": "{{ product.title | escape }}",
+  "url": "{{ shop.url }}{{ product.url }}",
+  {%- if product.featured_image -%}
+    {%- assign image_size = product.featured_image.width | append: 'x' -%}
+    "image": [
+      "https:{{ product.featured_image.src | img_url: image_size }}"
+    ],
+  {%- endif -%}
+  "description": "{{ product.description | strip_html | escape }}",
+  {%- if current_variant.sku != blank -%}
+    "sku": "{{ current_variant.sku }}",
+  {%- endif -%}
+  "brand": {
+    "@type": "Thing",
+    "name": "{{ product.vendor | escape }}"
+  },
+  "offers": [
+    {%- for variant in product.variants -%}
+      {
+        "@type" : "Offer",
+        {%- if variant.sku != blank -%}
+          "sku": "{{ variant.sku }}",
+        {%- endif -%}
+        "availability" : "http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
+        "price" : "{{ variant.price | divided_by: 100.00 }}",
+        "priceCurrency" : "{{ shop.currency }}",
+        "url" : "{{ shop.url }}{{ variant.url }}"
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]
+}
+</script>
+
+{{ 'option_selection.js' | shopify_asset_url | script_tag }}
+<script type="text/javascript">
+  // Override default values of shop.strings for each template.
+  // Alternate product templates can change values of
+  // add to cart button, sold out, and unavailable states here.
+  theme.productStrings = {
+    addToCart: {{ 'products.product.pre_order' | t | json}},
+    soldOut: {{ 'products.product.sold_out' | t | json }},
+    unavailable: {{ 'products.product.unavailable' | t | json }}
+  }
+  
+  $(function(){
+    $('.swatch :radio').change(function() {
+      var optionIndex = $(this).closest('.swatch').attr('data-option-index');
+      var optionValue = $(this).val();
+      $(this).closest('form').find('.single-option-selector').eq(optionIndex).val(optionValue).trigger('change');
+      {%- if settings.show_multiple_currencies -%}Currency.convertAll(shopCurrency, $('#currencies li.selected').attr('data-currency'));{%- endif -%}
+    });
+  });
+  
+{%- if product.variants.size > 1 -%}
+  var variantImages = {},
+    thumbnails,
+    variant,
+    variantImage,
+    optionValue,
+    productOptions = [];
+    {% for variant in product.variants %}
+       variant = {{ variant | json }};
+       if ( typeof variant.featured_image !== 'undefined' && variant.featured_image !== null ) {
+         variantImage =  variant.featured_image.src.split('?')[0].replace(/http(s)?:/,'');
+         variantImages[variantImage] = variantImages[variantImage] || {};
+         {% for option in product.options %}
+         
+           {% assign option_value = variant.options[forloop.index0] %}
+           {% assign option_key = 'option-' | append: forloop.index0 %}
+         	
+           if (typeof variantImages[variantImage][{{ option_key | json }}] === 'undefined') {
+             variantImages[variantImage][{{ option_key | json }}] = {{ option_value | json }};
+           }
+           else {
+             var oldValue = variantImages[variantImage][{{ option_key | json }}];
+             if ( oldValue !== null && oldValue !== {{ option_value | json }} )  {
+               variantImages[variantImage][{{ option_key | json }}] = null;
+             }
+           }
+         {% endfor %}
+       }
+       productOptions.push(variant);
+    {% endfor %}
+{%- endif -%}
+ 
+</script>

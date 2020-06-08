@@ -1,0 +1,37 @@
+{% assign product_box = forloop.index | minus:1 %}
+{% assign delay_time = 50 | times : product_box %} 
+{%- assign img_url = product.featured_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+{%- assign grid_image_scale = '2' -%}
+<div class="grid-view-item style1 {% unless product.available %} grid-view-item--sold-out{% endunless %}">
+	<div class="grid-view_image">
+		<a class="grid-view-item__link" href="{{ product.url | within: collection }}">    
+       		<!-- product image -->
+          	<img class="grid-view-item__image lazyload" src="{{ product.featured_image | img_url: '100x' }}"
+               data-src="{{ img_url }}" data-widths="[100, 200, 360, 540, 720]" data-aspectratio="{{ product.featured_image.aspect_ratio }}" data-sizes="auto" alt="{{ product.featured_image.alt | escape }}">
+      	</a>
+      	<!-- product label -->
+      	{% unless block.type == 'megamenu2' %}
+		{% if settings.pr_lbl %}
+            <span class="product-labels">
+              {%- if settings.sale_lbl and product.compare_at_price > product.price and settings.sale_lbl -%}
+                {% if settings.sale_label_style == "salelabel" %}
+                  <label class="lbl on-sale">{{ 'products.product.on_sale' | t}}</label>
+                {% else %}
+                  <label class="lbl on-sale">-{{ product.compare_at_price_min | minus: product.price | times: 100 | divided_by: product.compare_at_price_min }}%</label>
+                {% endif %}
+              {%- endif -%}
+              {%- if product.tags contains settings.pr_label1 -%}<label class="lbl pr-label1">{{settings.pr_label1}}</label>{%- endif -%}
+      		  {%- if product.tags contains settings.pr_label2 -%}<label class="lbl pr-label2">{{settings.pr_label2}}</label>{%- endif -%}
+      		  {%- if product.tags contains settings.pr_label3 -%}<label class="lbl pr-label3">{{settings.pr_label3}}</label>{%- endif -%}
+              {%- unless product.available -%}<label class="lbl sold-out"><span>{{ 'products.product.sold_out' | t}}</span></label>{%- endunless -%}
+            </span>
+        {% endif %}
+      	{% endunless %}
+    </div>
+    <div class="details">
+      	{% if settings.show_vendor %}<div class="grid-view-item__vendor">{{ product.vendor }}</div>{% endif %}
+        <a href="{{ product.url | within: collection }}" class="grid-view-item__title">{{ product.title }}</a>
+        <div class="grid-view-item__meta">{% include 'product-price' %}</div>
+      	{% unless block.type == 'megamenu2' %}{% include 'color-swatches' %}{% endunless %}
+	</div>
+</div>

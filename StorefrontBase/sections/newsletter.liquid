@@ -1,0 +1,129 @@
+<div class="content-indent {{ section.settings.top-offeset}}">
+  <div class="newsletter-section {% unless section.settings.section_width %}page-width{% endunless %} wow fadeIn"> 
+    {% if section.settings.section_cov %} <div class="section-cover small-pd" style="background-color:{{section.settings.sec_bg_clr}};"> {% endif%}   
+
+    {%- if section.settings.title != blank  or section.settings.subtitle != blank -%}
+    <div class="sec-ttl {{ settings.title_align}}">
+      <h3 class="h3">{{ section.settings.title }}</h3>     
+      {%- if section.settings.subtitle != blank -%}<span>{{section.settings.subtitle}}</span>{%- endif -%}
+    </div>
+    {% endif %}
+
+    {% include 'newsletter-form' %}         
+    {% if section.settings.section_cov %}</div> {% endif%}
+  </div>
+</div>
+
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "class": "index-section index-section--flush",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default":"Newsletter"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label":"Subheading",
+      "default":"Sign up to stay in the loop. Receive updates, access to exclusive deals, and more."
+    },   
+    {
+      "type": "paragraph",
+      "content":"Any customers who sign up will have an account created for them in Shopify. [View customers](/admin/customers?query=&accepts_marketing=1)"       
+    },
+	 {
+        "type": "paragraph",
+        "content": "Section==="
+      },
+        {
+        "type": "select",
+        "id": "top-offeset",
+        "label": "Top OffSet",
+        "default": "default",
+        "options": [
+        {
+        "value": "default",
+        "label": "Default"
+        },
+        {
+        "value": "small",
+        "label": "Small"
+        },
+        {
+        "value": "none",
+        "label": "None"
+        }
+        ]
+        }, 	
+		{
+		"type":"checkbox",
+		"id":"section_width",
+		"label":"Fullwidth?",
+		"default": true
+	  },	 
+		{	
+            "type": "checkbox",
+            "id": "section_cov",
+            "label": "Use Background?",
+            "default": true
+        },
+      {
+      "type": "color",
+      "id": "sec_bg_clr",
+      "label": "Background",
+      "default":"#fafafa"	
+      },		
+      {
+        "type": "color",
+        "id": "text_clr",
+        "label": "Text",
+        "default": "#000"
+      },
+	 {
+        "type": "color",
+        "id": "input_bg",
+        "label": "Input Background",
+        "default": "#fff"
+      },
+	 {
+        "type": "color",
+        "id": "input_text",
+        "label": "Input Text",
+        "default": "#000"
+      },
+	 {
+        "type": "color",
+        "id": "input_btn",
+        "label": "Input Button",
+        "default": "#000"
+      },
+	  {
+        "type": "color",
+        "id": "input_btn_text",
+        "label": "Input Button Text",
+        "default": "#fff"
+      }
+  ],
+  "presets": [
+    {
+      "name":"Newsletter",
+      "category": "5. Social"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+
+  .newsletter-section  .sec-ttl h3,
+  .newsletter-section  .sec-ttl span { color:{{section.settings.text_clr}};}
+  .newsletter__input { border:0; background-color:{{section.settings.input_bg}}; color:{{section.settings.input_text}};}
+  .newsletter__submit { font-size:13px; letter-spacing:0.5px; border:0; background-color:{{section.settings.input_btn}}; color:{{section.settings.input_btn_text}};}
+  .newsletter__submit:hover {opacity:0.9;  border:0;}
+  
+</style>

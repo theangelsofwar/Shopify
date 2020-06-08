@@ -1,0 +1,63 @@
+{%- if section.blocks.size > 0 -%}
+<div class="mobile-nav-wrapper" role="navigation">
+  <div class="closemobileMenu"><i class="ad ad-times-circle pull-right" aria-hidden="true"></i> Close Menu</div>
+  <ul id="MobileNav" class="mobile-nav">
+    {%- for block in section.blocks -%}
+    {%- assign label = block.settings.title |  split: '[label' | last  | split: ']' | first | prepend: "nm_label" -%}
+    {%- capture linkLevel1 -%}<a href="{% if block.settings.url != blank %}{{ block.settings.url }}{% else %}#{% endif %}">{{ block.settings.title | split: '[label' | first }}{% if block.settings.title contains '[label' %} <span class="lbl {{label}}">{{ section.settings[label] }}</span>{% endif %} <i class="ad ad-plus-l"></i></a>{%- endcapture -%}
+    {%- if block.type == 'homelink' -%}
+    <li class="lvl1"><a href="{{shop.url}}">{{ 'general.breadcrumbs.home' | t}}</a></li>
+    {%- endif -%}
+    {%- if block.type == 'single_link' -%}
+    {%- assign singlelabel = block.settings.title |  split: '[label' | last  | split: ']' | first | prepend: "nm_label" -%}
+    <li class="lvl1">{{linkLevel1 | replace: '<i class="ad ad-plus-l"></i>',''}}</li>
+    {%- endif -%}
+    {%- if block.type == 'megamenu1' or block.type == 'megamenu2' or block.type == 'megamenu4' or block.type == 'megamenu5' or block.type == 'dropdown' -%}
+    {%- if block.settings.title != blank -%}<li class="lvl1 parent megamenu">{{linkLevel1}}<ul>{% for link in linklists[block.settings.mm_linklist].links %}{% include 'mm-mobile-links' %}{% endfor %}</ul></li>{%- endif -%}
+    {%- endif -%}
+    {%- if block.type == 'megamenu3' -%}
+    {%- if block.settings.title != blank -%}
+    <li class="lvl1 parent megamenu">{{linkLevel1}}
+      <ul>
+        {%- if block.settings.mm_linkcol1 != blank -%}
+        <li class="lvl-1">
+          <a href="{% if block.settings.ttlurl1 != blank %}{{ block.settings.ttlurl1 }}{% else %}#{% endif %}" class="lvl-1">{{ block.settings.ttl1 }}<i class="ad ad-plus-r" aria-hidden="true"></i></a>
+          <ul>{% for link in linklists[block.settings.mm_linkcol1].links %}<li class="lvl-2{% if link.active %} active{% endif %}"><a href="{{ link.url }}" class="site-nav">{{ link.title }}</a></li>{% endfor %}</ul>
+        </li>
+        {%- endif -%}
+
+        {%- if block.settings.mm_linkcol2 != blank -%}
+        <li class="lvl-1">
+          <a href="{% if block.settings.ttlurl2 != blank %}{{ block.settings.ttlurl2 }}{% else %}#{% endif %}" class="lvl-1">{{ block.settings.ttl2 }}<i class="ad ad-plus-r" aria-hidden="true"></i></a>
+          <ul>{% for link in linklists[block.settings.mm_linkcol2].links %}<li class="lvl-2{% if link.active %} active{% endif %}"><a href="{{ link.url }}" class="site-nav lvl-2">{{ link.title }}</a></li>{% endfor %}</ul>
+        </li>
+        {%- endif -%}
+
+        {%- if block.settings.mm_linkcol3 != blank -%}
+        <li class="lvl-1">
+          <a href="{% if block.settings.ttlurl3 != blank %}{{ block.settings.ttlurl3 }}{% else %}#{% endif %}" class="lvl-1">{{ block.settings.ttl3 }}<i class="ad ad-plus-r" aria-hidden="true"></i></a>
+          <ul>{% for link in linklists[block.settings.mm_linkcol3].links %}<li class="lvl-2{% if link.active %} active{% endif %}"><a href="{{ link.url }}" class="site-nav">{{ link.title }}</a></li>{% endfor %}</ul>
+        </li>
+        {%- endif -%}
+
+        {%- if block.settings.mm_linkcol4 != blank -%}
+        <li class="lvl-1">
+          <a href="{% if block.settings.ttlurl4 != blank %}{{ block.settings.ttlurl4 }}{% else %}#{% endif %}" class="lvl-1">{{ block.settings.ttl4 }}<i class="ad ad-plus-r" aria-hidden="true"></i></a>
+          <ul>{% for link in linklists[block.settings.mm_linkcol4].links %}<li class="lvl-2{% if link.active %} active{% endif %}"><a href="{{ link.url }}" class="site-nav">{{ link.title }}</a></li>{% endfor %}</ul>
+        </li>
+        {%- endif -%}
+
+        {%- if block.settings.mm_linkcol5 != blank -%}
+        <li class="lvl-1">
+          <a href="{% if block.settings.ttlurl5 != blank %}{{ block.settings.ttlurl5 }}{% else %}#{% endif %}" class="lvl-1">{{ block.settings.ttl5 }}<i class="ad ad-plus-r" aria-hidden="true"></i></a>
+          <ul>{% for link in linklists[block.settings.mm_linkcol5].links %}<li class="lvl-2{% if link.active %} active{% endif %}"><a href="{{ link.url }}" class="site-nav">{{ link.title }}</a></li>{% endfor %}</ul>
+        </li>
+        {%- endif -%}
+      </ul>
+    </li>
+    {%- endif -%}
+    {%- endif -%}
+    {%- endfor -%}
+  </ul>
+</div>
+{%- endif -%}

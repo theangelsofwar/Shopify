@@ -1,0 +1,56 @@
+{% capture colors %}
+<style type="text/css">
+  {% for block in section.blocks %}
+  {%- assign color = block.settings.title | handleize -%}
+  .swt{{color}}{
+    {% if block.settings.image == blank %}
+    background-color:{{block.settings.color}} !important;
+    {% else %}
+    background:{{block.settings.color}} url({{block.settings.image | img_url: '75x'}}) no-repeat 50% 50%/cover !important;
+    {% endif %}
+  }
+  {% endfor %}
+</style>
+{% endcapture %}
+{{colors | strip_newlines | remove: "  " | remove: "	" }}
+
+{% schema %}
+  {
+    "name": "Custom Colors",
+    "settings": [               	 
+	  {
+        "type": "header",       
+        "content": "Variant Swatch"
+      },
+	  {
+        "type": "checkbox",
+        "id": "custom_colors",
+        "label": "Active Custom Colors",
+        "default": true
+      }
+    ],
+	"blocks": [
+      {
+        "type": "Color",
+        "name": "Color",
+        "settings": [
+         	{ 
+              "type":"text",
+              "id":"title",
+              "label":"Color Name"
+          	},
+            {
+              "type": "color",
+              "id": "color",
+              "label": "Color code"
+            },
+            {
+              "type": "image_picker",
+              "id": "image",
+              "label": "Color Image"
+            }
+        ]
+      }
+	]
+  }
+{% endschema %}

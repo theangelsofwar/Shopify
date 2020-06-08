@@ -1,0 +1,819 @@
+{% capture siteFooter %}
+<footer class="site-footer{% if section.settings.snow_effect %} falling-snow{% endif %}{% if section.settings.snow_style == "style2" %} style2{% else %} style1{% endif %}" role="contentinfo">  
+   
+  {% if section.blocks.size != 0 %}
+  	<div class="footer-top">  
+    <div class="{% unless section.settings.section_width %}page-width{% else %} footer-fw{% endunless %}">
+      <div class="footer-block">
+
+        {% for block in section.blocks %}          
+        {% case block.settings.width %}
+        {% when '20%' %}         
+        {%- assign block_width = 'medium-up--one-fifth' -%}
+        {%- assign image_size = '350x' -%}
+        {% when '25%' %}         
+        {%- assign block_width = 'medium-up--one-quarter' -%}
+        {%- assign image_size = '350x' -%}
+        {% when '33%' %}        
+        {%- assign block_width = 'medium-up--one-third' -%}
+        {%- assign image_size = '530x' -%}
+        {% when '40%' %}         
+        {%- assign block_width = 'medium-up--two-fifths' -%}
+        {%- assign image_size = '700x' -%}
+        {% when '50%' %}          
+        {%- assign block_width = 'medium-up--one-half' -%}
+        {%- assign image_size = '800x' -%}
+        {% when '60%' %}          
+        {%- assign block_width = 'medium-up--three-fifths' -%}
+        {%- assign image_size = '850x' -%}
+        {% when '66%' %}         
+        {%- assign block_width = 'medium-up--two-thirds' -%}
+        {%- assign image_size = '850x' -%}
+        {% when '75%' %}        Z
+        {%- assign block_width = 'medium-up--three-quarters' -%}
+        {%- assign image_size = '850x' -%}
+        {% when '100%' %}          
+        {%- assign block_width = 'one-whole' -%}
+        {%- assign image_size = '1920x' -%}
+        {% endcase %}       
+
+
+        {% capture blockTtl %}{% if block.settings.title != blank %}<h4 class="h4">{{ block.settings.title }}</h4>{% endif %}{% endcapture %}
+        {%- case block.type -%}
+        {% when 'custom' %}
+        <div id="nav_menu-{{ block.id }}" class="footer-block__item {{ block_width }} custom-block">
+          {{blockTtl}}
+
+          {% if block.settings.logo %}
+          <p><img src="{{ block.settings.logo | img_url: 'master' }}" alt="{{ block.settings.logo.alt | default: shop.name }}"></p>
+          {% endif %}
+
+          <div class="text custom-text">{{ block.settings.custom-text }}</div>                 
+          {% if block.settings.show_socials %}
+          
+          	  {% if block.settings.socials_ttl != blank %}
+              <h3 class="h4">{{ block.settings.socials_ttl }}</h3>
+              {% endif %} 
+          
+              {% include 'social-media' %}
+          {% endif %}                   
+        </div>
+
+        {% when 'menu' %}
+        <div id="nav_menu-{{ block.id }}" class="footer-block__item {{ block_width }} footer-links">
+          {{blockTtl}}
+          <ul>
+            {% for link in linklists[block.settings.menulinks].links %}
+            <li><a href="{{ link.url }}">{{ link.title | split: '[' | first }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% when 'contact' %}
+        <div id="text-{{ block.id }}" class="footer-block__item {{ block_width }} contact-box">
+
+          {{blockTtl}}
+
+          {% if block.settings.logo %}
+          <p><img src="{{ block.settings.logo | img_url: 'master' }}"
+                  srcset="{{ block.settings.logo | img_url: 'master' }} 1x, {{ block.settings.logo | img_url: 'master', scale: 2 }} 2x"
+                  alt="{{ block.settings.logo.alt | default: shop.name }}">
+          </p>
+          {% endif %}
+          
+          <ul class="addressFooter">
+            {% if block.settings.address  != blank  %}
+            <li>{% if block.settings.show_icons %} <i class="ad ad-map-marker-al " aria-hidden="true"></i> {% endif %} {{ block.settings.address }}</li>
+            {% endif %}
+            {% if block.settings.phone  != blank  %}
+            <li class="phone">{% if block.settings.show_icons %}<i class="ad ad-phone-l" aria-hidden="true"></i> {% endif %}<a href="tel:{{block.settings.phone }}">{{ block.settings.phone }}</a></li>
+            {% endif %}
+            {% if block.settings.email  != blank  %}
+            <li class="email">{% if block.settings.show_icons %}<i class="ad ad-envelope-l" aria-hidden="true"></i> {% endif %} <a href="mailto:{{block.settings.email}}">{{ block.settings.email }}</a></li>
+            {% endif %}
+          </ul>
+          
+          {% if block.settings.show_socials %}
+            {% if block.settings.socials_ttl != blank %}
+            <h5 class="h4">{{ block.settings.socials_ttl }}</h5>
+            {% endif %} 
+            {% include 'social-media' %}
+          {% endif %} 
+        </div>         			
+
+        {% when 'newsletter' %}
+        <div id="text-{{ block.id }}" class="footer-block__item {{ block_width }} newsletter{% if block.settings.newltr_align %} text-center{% endif %}">
+          <div class="wrap-newsletter">
+            {{blockTtl}}
+
+            {% if block.settings.sub_title %}
+           	 <p>{{ block.settings.sub_title }}</p>
+            {% endif %}
+
+            {% include 'newsletter-form' %}
+
+            {% if block.settings.show_socials %}
+            <div class="socials">
+              {%- if block.settings.socials_ttl != blank -%}<h3 class="h4">{{ block.settings.socials_ttl }}</h3>{%- endif -%}
+              {% include 'social-media' %}
+            </div>
+            {% endif %}
+
+          </div>                  
+        </div>
+
+        {% when 'instagram' %}
+        <div id="text-{{ block.id }}" class="footer-block__item {{ block_width }} home-instagram instagram">   
+          <div data-section-id="{{ section.id }}" data-section-type="instagram" data-image="{{ block.settings.images_size }}"
+               data-count="{{ block.settings.limit }}" data-from="{{ block.settings.imgfrom }}" data-user="{{ block.settings.user-id }}" data-tag="{{ block.settings.tag }}">
+            {{blockTtl}}
+            {% if block.settings.sub_title %}
+            <p>{{ block.settings.sub_title }}</p>
+            {% endif %}   
+            <div id="instafeed{{section.id}}" class="instafeed im{{ block.settings.images_size }}"></div>   
+          </div>
+        </div>
+
+        {% when 'socialicons' %}
+        <div id="text-{{ block.id }}" class="footer-block__item {{ block_width }} socialicons">
+          {{blockTtl}}
+          {% include 'social-media' %}
+        </div>
+        {%- endcase -%}                
+        {% endfor %}
+      </div>        
+    </div>
+  </div>
+  {% endif %}
+  
+  {% if section.settings.copyright_text != blank or section.settings.show_payment %}
+  <div class="footer-bottom">
+    <div class="{% unless section.settings.section_width %}page-width {% else %}footer-fw{% endunless %}">
+      <div class="grid">
+        {% if section.settings.show_payment %}
+          <div class="grid__item paymentCall{% if section.settings.copyright_text != blank %} medium-up--one-half text-right{% endif %}">
+
+            {%- if section.settings.payment_img != blank -%}
+           	 <p class="footer-img"><img src="{{ section.settings.payment_img | img_url: 'master' }}" alt="{{ section.settings.logo.alt }}" style="max-width:{{section.settings.payment_img_width}}px;" /></p>
+            {%- else -%}
+            <ul class="payment-icons list--inline"> 
+              {% if section.settings.show_payment_visa %}<li><i class="ad ad-cc-visa" aria-hidden="true"></i></li>{% endif %}                         
+              {% if section.settings.show_payment_mastercard %}<li><i class="ad ad-cc-mastercard" aria-hidden="true"></i></li>{% endif %}
+              {% if section.settings.show_payment_american_express %}<li><i class="ad ad-cc-amex" aria-hidden="true"></i></li>{% endif %}
+              {% if section.settings.show_payment_paypal %}<li><i class="ad ad-cc-paypal" aria-hidden="true"></i></li>{% endif %}
+              {% if section.settings.show_payment_discover %}<li><i class="ad ad-cc-discover" aria-hidden="true"></i></li>{% endif %}
+              {% if section.settings.show_payment_stripe %}<li><i class="ad ad-cc-stripe" aria-hidden="true"></i></li>{% endif %}
+              {% if section.settings.show_payment_jcb %}<li><i class="ad ad-cc-jcb" aria-hidden="true"></i>{% endif %}
+              {% if section.settings.show_payment_apple %}<li><i class="ad ad-cc-apple-pay" aria-hidden="true"></i>{% endif %}
+              {% if section.settings.show_payment_google %}<li><i class="ad ad-google" aria-hidden="true"></i>{% endif %}
+            </ul>
+            {%- endif -%}
+          </div>
+        {% endif %}
+        {% if section.settings.copyright_text != blank %}
+        <div class="grid__item{% if section.settings.show_payment %} medium-up--one-half text-left{% else %} text-center {% endif %}">
+          {{ section.settings.copyright_text }}
+          {% if section.settings.show_designby %}<span class="designBy">{% if section.settings.copyright_text != blank %}<br />{% endif %}Designed by <a href="https://www.adornthemes.com" target="_blank">AdornThemes</a></span>{% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</footer>
+{% endcapture %}
+{{ siteFooter | strip_newlines | remove: "  " | remove: "	" }}
+
+{% schema %}
+  {
+    "name": "Footer",
+    "settings": [
+		{
+		"type":"checkbox",
+		"id":"section_width",
+		"label":"Fullwidth?",
+		"default": false
+	  },
+		{
+		"type":"checkbox",
+		"id":"snow_effect",
+		"label":"Enable Snow Effect?",
+		"default": false,
+		"info":"For Christmas"
+	   },
+        {
+          "type": "select",
+          "id": "snow_style",
+          "label": "Snow Style",
+          "default": "style1",         
+          "options": [
+            {
+            "value": "style1",
+            "label": "Falling Down"
+            },
+            {
+            "value": "style2",
+            "label": "Falling From Left"
+            }
+            ]
+          },
+ 	  	{
+        	"type": "textarea",
+        	"id": "copyright_text",
+        	"label": "Copyright Text",
+        	"default": "© 2019,Avon. All Rights Reserved. Ecommerce Software by Shopify."
+      	},
+        {
+          "type": "checkbox",
+          "id": "show_designby",
+          "label": "Show Designed by",
+          "default": true
+        },
+		{
+			"type":"header",
+        	"content":"Payment Options"
+		},
+      	{
+        	"type": "checkbox",
+        	"id": "show_payment",
+        	"label": "Show Paymnet Cards",
+        	"default": true
+        },
+      	{
+        	"type": "checkbox",
+        	"id": "show_payment_visa",
+        	"label": "Visa",
+        	"default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_payment_mastercard",
+          "label": "Master Card",
+          "default": true
+        },
+       {
+          "type": "checkbox",
+          "id": "show_payment_american_express",
+          "label": "American Express",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_payment_paypal",
+          "label": "Paypal",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_payment_discover",
+          "label": "Discover",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_payment_stripe",
+          "label": "Stripe",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_payment_jcb",
+          "label": "JCB",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_payment_apple",
+          "label": "Apple Pay",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "show_payment_google",
+          "label": "Google Pay",
+          "default": false
+        },
+		{
+          "type": "image_picker",
+          "id": "payment_img",
+          "label": "Payment Icon Image",
+          "info": "Use image instead of Payment icons"
+        },
+ 	  	{
+        	"type": "text",
+        	"id": "payment_img_width",
+        	"label": "MAx width",
+        	"default": "350"
+      	}
+    ],
+	"max_blocks": 10,
+	"blocks": [
+	  {
+        "type": "menu",
+        "name": "Menu",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Navigation Title",
+			"default": "Informations"
+          },
+          {
+            "type": "link_list",
+            "id": "menulinks",
+            "label": "Select Navigation",
+            "default": "main-menu"
+          },
+		  {
+            "type": "select",
+            "id": "width",
+            "label": "Container width",
+            "default": "50%",
+			"info":"Total width of all block must not more than 100%",
+            "options": [
+			  {
+                "value": "20%",
+                "label": "20%"
+              },
+              {
+                "value": "25%",
+                "label": "25%"
+              },
+              {
+                "value": "33%",
+                "label": "33%"
+              },
+			  {
+                "value": "40%",
+                "label": "40%"
+              },
+              {
+                "value": "50%",
+                "label": "50%"
+              },
+			   {
+                "value": "60%",
+                "label": "60%"
+              },
+              {
+                "value": "66%",
+                "label": "66%"
+              },
+              {
+                "value": "75%",
+                "label": "75%"
+              },
+              {
+                "value": "100%",
+                "label": "100%"
+              }
+            ]
+          }
+        ]
+      },
+	  {
+        "type": "contact",
+        "name": "Contact Details",
+		"limit": 1,
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+			"default": "Contact Us"
+          },
+          {
+            "type": "image_picker",
+            "id": "logo",
+            "label": "Logo image"
+          },
+		  {
+            "type": "textarea",
+            "id": "address",
+            "label": "Address",
+			"default": "55 Gallaxy Enque,<br />2568 steet, 23568 NY"
+          },
+		  {
+            "type": "textarea",
+            "id": "phone",
+            "label": "Phone",
+			"default": "(440) 000 000 0000"
+          },
+		  {
+            "type": "textarea",
+            "id": "email",
+            "label": "Email",
+			"default": "sales@yousite.com"
+          },
+ 		  {
+			"type":"checkbox",
+			"id":"show_icons",
+			"label":"Show Icons",
+			"default":false
+		  },
+      	  {
+			"type":"checkbox",
+			"id":"show_socials",
+			"label":"Show Socials",
+			"default":true
+		  },
+      	  {
+			"type":"text",
+			"id":"socials_ttl",
+			"label":"Socials Title",
+			"default":"Stay Connected"
+		  },
+		  {
+            "type": "select",
+            "id": "width",
+            "label": "Container width",
+            "default": "50%",
+            "info":"Total width of all block must not more than 100%",
+            "options": [
+			 {
+                "value": "20%",
+                "label": "20%"
+              },
+			   {
+                "value": "25%",
+                "label": "25%"
+              },
+              {
+                "value": "33%",
+                "label": "33%"
+              },
+             {
+                "value": "40%",
+                "label": "40%"
+              },
+              {
+                "value": "50%",
+                "label": "50%"
+              },
+			   {
+                "value": "60%",
+                "label": "60%"
+              },             
+              {
+                "value": "66%",
+                "label": "66%"
+              },
+              {
+                "value": "75%",
+                "label": "75%"
+              },
+              {
+                "value": "100%",
+                "label": "100%"
+              }
+            ]
+          }
+        ]
+      },
+	  {
+        "type": "custom",
+        "name": "Custom Block",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+			"default": "About Us"
+          },
+          {
+            "type": "image_picker",
+            "id": "logo",
+            "label": "Upload image"
+          },
+		  {
+            "type": "textarea",
+            "id": "custom-text",
+            "label": "Text",
+			"default": "Making a profitable ecommerce store is hard work. You can't just open a website and expect people to flood in. If you really want to succeed you have to create traffic"
+          },
+		 {
+			"type":"checkbox",
+			"id":"show_socials",
+			"label":"Show Socials",
+			"default":true
+		  },
+      	  {
+			"type":"text",
+			"id":"socials_ttl",
+			"label":"Socials Title",
+			"default":"Stay Connected"
+		  },
+ 	     {
+            "type": "select",
+            "id": "width",
+            "label": "Container width",
+            "default": "50%",
+            "info":"Total width of all block must not more than 100%",
+            "options": [
+			 {
+                "value": "20%",
+                "label": "20%"
+              },
+				{
+                "value": "25%",
+                "label": "25%"
+              },
+              {
+                "value": "33%",
+                "label": "33%"
+              },
+             {
+                "value": "40%",
+                "label": "40%"
+              },
+              {
+                "value": "50%",
+                "label": "50%"
+              },
+			   {
+                "value": "60%",
+                "label": "60%"
+              },
+              {
+                "value": "66%",
+                "label": "66%"
+              },             
+              {
+                "value": "75%",
+                "label": "75%"
+              },
+              {
+                "value": "100%",
+                "label": "100%"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "newsletter",
+        "name": "Newsletter Signup",
+        "limit": 1,
+        "settings": [
+		  {
+			"type":"checkbox",
+			"id":"newltr_align",
+			"label":"Align Center",
+			"default":false
+		  },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Newsletter"
+          },
+		  {
+            "type": "text",
+            "id": "sub_title",
+            "label": "text",
+			"default": "Enter your email to receive daily news and get 20% off coupon for all items. NO spam, we promise"
+          },
+		 {
+			"type":"checkbox",
+			"id":"show_socials",
+			"label":"Show Socials",
+			"default":true
+		  },
+      	  {
+			"type":"text",
+			"id":"socials_ttl",
+			"label":"Socials Title",
+			"default":"Stay Connected"
+		  },
+		   {
+            "type": "select",
+            "id": "width",
+            "label": "Container width",
+            "default": "50%",
+            "info":"Total width of all block must not more than 100%",
+            "options": [
+			 {
+                "value": "20%",
+                "label": "20%"
+              },
+			  {
+                "value": "25%",
+                "label": "25%"
+              },
+              {
+                "value": "33%",
+                "label": "33%"
+              },
+             {
+                "value": "40%",
+                "label": "40%"
+              },
+              {
+                "value": "50%",
+                "label": "50%"
+              },
+			   {
+                "value": "60%",
+                "label": "60%"
+              },
+              {
+                "value": "66%",
+                "label": "66%"
+              },
+              {
+                "value": "75%",
+                "label": "75%"
+              },
+              {
+                "value": "100%",
+                "label": "100%"
+              }
+            ]
+          }
+        ]
+      },
+  	 {
+        "type": "instagram",
+        "name": "Instagram",
+        "limit": 1,
+        "settings": [
+		  {
+			"type":"paragraph",
+			"content":"Note: Instagram will not work at 2 place at the same time. Either you can display in section or footer"
+		  },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Avon On Instagram"
+          },
+		  {
+            "type": "text",
+            "id": "sub_title",
+            "label": "text",
+			"default": "Phasellus lorem malesuada ligula pulvinar commodo maecenas suscipit auctom."
+          },
+          {
+             "type": "select",
+             "id": "imgfrom",
+             "label": "Show images from",
+             "default": "user",
+             "options": [
+             	{
+                    "value": "user",
+                    "label": "User Id"
+                },
+                {
+                    "value": "tag",
+                    "label": "Tag Name"
+                }
+			]
+          },
+          {
+            "type": "text",
+            "id": "user-id",
+            "label": "User Id",
+            "default": "adornthemes"
+          },
+          {
+            "type": "text",
+            "id": "tag",
+            "label": "Tag Name",
+            "default": "shopify"
+          }, 
+          {
+              "type": "select",
+              "id": "images_size",
+              "label": "Image Size",
+              "default":"150",
+              "options": [
+                {
+                  "value": "150",
+                  "label": "Small"
+                },
+                {
+                  "value": "320",
+                  "label": "Medium"
+                },
+                {
+                  "value": "640",
+                  "label": "Large"
+                }
+              ]
+          },
+        {
+          "type": "range",
+          "id": "limit",
+          "label": "Number of photos",
+          "default": 8,
+          "min": 1,
+          "max": 12,
+          "step": 1
+        },
+		   {
+            "type": "select",
+            "id": "width",
+            "label": "Container width",
+            "default": "50%",
+            "info":"Total width of all block must not more than 100%",
+            "options": [
+			 {
+                "value": "20%",
+                "label": "20%"
+              },
+			 {
+                "value": "25%",
+                "label": "25%"
+              },
+              {
+                "value": "33%",
+                "label": "33%"
+              },
+            {
+                "value": "40%",
+                "label": "40%"
+              },
+              {
+                "value": "50%",
+                "label": "50%"
+              },
+			   {
+                "value": "60%",
+                "label": "60%"
+              },
+              {
+                "value": "66%",
+                "label": "66%"
+              },
+              {
+                "value": "75%",
+                "label": "75%"
+              },
+              {
+                "value": "100%",
+                "label": "100%"
+              }
+            ]
+          }
+        ]
+      },
+	  {
+        "type": "socialicons",
+        "name": "Social Icons",
+        "limit": 1,
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Stay Connected"
+          },		  
+		   {
+            "type": "select",
+            "id": "width",
+            "label": "Container width",
+            "default": "50%",
+            "info":"Total width of all block must not more than 100%",
+            "options": [
+			 {
+                "value": "20%",
+                "label": "20%"
+              },
+			  {
+                "value": "25%",
+                "label": "25%"
+              },
+              {
+                "value": "33%",
+                "label": "33%"
+              },
+              {
+                "value": "40%",
+                "label": "40%"
+              },
+              {
+                "value": "50%",
+                "label": "50%"
+              },
+			   {
+                "value": "60%",
+                "label": "60%"
+              },
+              {
+                "value": "66%",
+                "label": "66%"
+              },
+              {
+                "value": "75%",
+                "label": "75%"
+              },
+              {
+                "value": "100%",
+                "label": "100%"
+              }
+            ]
+          }
+        ]
+      }
+	]
+  }
+{% endschema %}

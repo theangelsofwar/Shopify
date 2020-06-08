@@ -1,0 +1,35 @@
+{% assign sold_out = true %} 
+{% if product.available %}{% assign sold_out = false %}{% endif %}
+
+{% unless grid_image_width %}{%- assign grid_image_width = '300x300' -%}{% endunless %}
+
+{% assign product_box = forloop.index | minus:1 %}
+{% assign delay_time = 50 | times : product_box %} 
+
+{%- assign img_url = product.featured_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+{%- assign img_url1 = product.images[1] | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+
+{%- assign grid_image_scale = '2' -%}
+<div class="clearfix grid-view-item{% unless product.available %} product-price--sold-out grid-view-item--sold-out{% endunless %} wow fadeIn" data-wow-delay="{{delay_time}}ms">
+  <div class="grid-view_image">
+    
+    <a class="grid-view-item__link" href="{{ product.url | within: collection }}">    
+      <!-- product image -->
+      <img class="grid-view-item__image lazyload"
+           src="{{ product.featured_image | img_url: '20x' }}"
+           data-src="{{ img_url }}"
+           data-widths="[80, 120, 200, 300, 450]"
+           data-aspectratio="{{ product.featured_image.aspect_ratio }}"
+           data-sizes="auto" alt="{{ product.featured_image.alt | escape }}">
+    </a>
+
+    <!-- product buttons -->
+    {% if sold_out %}<label class="sold-out"><span>{{ 'products.product.sold_out' | t}}</span></label>{% endif %}
+  </div>
+  <div class="details">
+    <a href="{{ product.url | within: collection }}" class="grid-view-item__title">{{ product.title }}</a>
+    {% if settings.show_vendor %}<div class="grid-view-item__vendor">{{ product.vendor }}</div>{% endif %}
+   	 <div class="grid-view-item__meta">{% include 'product-price' %}</div>
+    {% if settings.show_product_review %}<div class="product-review"><span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span></div>{% endif %}
+  </div>
+</div>

@@ -1,0 +1,7 @@
+{%- if image != blank -%}
+{%- if image.width > 15 -%}{{ image | img_url: '15x' }} 15w {{ 15 | divided_by: image.aspect_ratio | round }}h,{%-endif -%}
+{%- if image.width > 30 -%}{{ image | img_url: '30x' }} 30w {{ 30 | divided_by: image.aspect_ratio | round }}h,{%-endif -%}
+{%- if image.width > 60 -%}{{ image | img_url: '60x' }} 60w {{ 60 | divided_by: image.aspect_ratio | round }}h,{%-endif -%}
+{%- if image.width > 90 -%}{{ image | img_url: '90x' }} 90w {{ 90 | divided_by: image.aspect_ratio | round }}h,{%-endif -%}
+{%- if image.width > 120 -%}{{ image | img_url: '120x' }} 120w {{ 120 | divided_by: image.aspect_ratio | round }}h{%-endif -%}
+{%- endif -%}

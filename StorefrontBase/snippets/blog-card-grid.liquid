@@ -1,0 +1,41 @@
+<div class="wrap-blog text-center">
+  {% if article.image %}
+  <a href="{{ article.url }}" class="article__grid-image">
+    <img class="lazyload" src="{{ article | img_url: '100x50',crop:'center' }}" data-sizes="auto" alt="{{ collection_image.alt | escape }}"
+         data-srcset="{{ article | img_url: '180x90',crop:'center' }} 180w, {{ article | img_url: '300x150',crop:'center' }} 300w,
+                      {{ article | img_url: '450x225',crop:'center' }} 450w, {{ article | img_url: '600x300',crop:'center' }} 600w,
+                      {{ article | img_url: '750x375',crop:'center' }} 750w" />
+  </a>
+  {% endif %}
+  <div class="article__grid-meta{% if article.image %} article__grid-meta--has-image{% endif %}">
+    <div class="wrap-blog-inner {{ section.settings.blog_align }}">
+      <h4 class="article__title"><a href="{{ article.url }}">{{ article.title }}</a></h4>
+      <ul class="publish-detail">
+        {% if section.settings.blog_show_date %}
+        <li><span class="article__date">{{ article.published_at | time_tag: format: 'month_day_year' }}</span></li>
+        {% endif %}
+        {% if section.settings.blog_show_author %}
+        <li><span class="article__author"> {{ 'blogs.article.by_author' | t }} <span>{{article.author}}</span></span></li>
+        {% endif %}
+        {% if section.settings.show_comment %}
+        {% if blog.comments_enabled? and article.comments_count > 0 %}
+        <li><i class="ad ad-comments-l" aria-hidden="true"></i><a href="{{ article.url }}#comments" class="btn-link">{{ 'blogs.comments.comments_with_count' | t: count: article.comments_count }}</a></li>
+        {% endif %}
+        {% endif %}
+      </ul>
+      {% if section.settings.show_mini_des %}
+      <div class="rte article__grid-excerpt">
+        {% if article.excerpt.size > 0 %}
+        {{ article.excerpt }}
+        {% else %}
+        {{ article.content | strip_html | truncate: 150 }}
+        {% endif %}             
+      </div>
+      {% endif %}
+
+      {% if section.settings.show_read_more %}
+      <a href="{{ article.url }}" class="btn btn--small btn-link">{{ 'blogs.article.read_more' | t }}</a>
+      {% endif %}
+    </div>
+  </div>
+</div>

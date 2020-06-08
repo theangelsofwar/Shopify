@@ -1,0 +1,42 @@
+{% if block.settings.custom_image != blank %}
+	{%- assign collection_image = block.settings.custom_image -%}
+{% elsif collection.image != blank %}
+	{%- assign collection_image = collection.image -%}
+{% elsif collection.products.first and collection.products.first.images != empty %}
+	{%- assign collection_image = collection.products.first.featured_image -%}
+{% else %}
+	{% assign collection_image = blank %}
+{% endif %}
+
+{%- assign img_url = collection_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+<div class="collection-grid-item">
+  <a href="{% if collection.empty? %}#{% else %}{{ collection.url }}{% endif %}" class="collection-grid-item__link">
+    <div class="img">
+      {% if collection.empty? %}
+        {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+        {{ 'collection-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}
+      {% else %}
+      	<img class="lazyload" src="{{ collection_image | img_url: '100x' }}" data-src="{{ img_url }}"
+           data-widths="[180, 300, 400, 540, 720]" data-aspectratio="{{ collection_image.aspect_ratio }}" data-sizes="auto" alt="{{ collection_image.alt | escape }}" />
+      {% endif %}
+    </div>
+    <div class="details wd-{{ section.settings.box-width}}" style="background:{{ section.settings.box_bg}}; color:{{section.settings.box_txt}}">
+      <div class="inner">
+        <h3 class="collection-grid-item__title {{section.settings.text_size}} {{ section.settings.font_weight}}">
+          {% if collection.empty? %}
+            	{{ 'homepage.onboarding.collection_title' | t }}     
+          {% else %}
+            {% if block.settings.custom_name != blank %}
+            	{{ block.settings.custom_name }}
+            {% else %}
+            	{{ collection.title }}
+            {% endif %}        
+          {% endif %}
+        </h3>
+        {% if section.settings.product_count %}<span class="counts">{{ 'collections.general.items_with_count' | t: count: collection.all_products_count }} products</span>{% endif %}
+        {% if block.settings.collection_btn != blank %}<button class="btn" type="button">{{block.settings.collection_btn}}</button>{% endif %}
+      </div>
+    </div>
+  </a>
+</div>
+<style>@media screen and (min-width:768px){ .collection-grid-item .details h3 { font-size:{{section.settings.box-text}}px; line-height:1.3; } }</style>

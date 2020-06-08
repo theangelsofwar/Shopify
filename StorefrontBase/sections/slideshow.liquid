@@ -1,0 +1,380 @@
+{%- capture slideShowSec -%}
+<div class="content-indent {{ section.settings.top-offeset}}" data-section-id="{{ section.id }}" data-section-type="slideshow-section">
+  {% if section.blocks.size > 0 %}
+  <div class="slideshow-wrapper{% if section.settings.section_width %} page-width{% endif %}{% if section.settings.snow_effect %} falling-snow{% endif %}{% if section.settings.snow_style == "style2" %} style2{% else %} style1{% endif %}"{% if section.settings.section_width %} style="max-width:{{ section.settings.box-width}}px; margin:0 auto"{% endif %}>
+ 
+    <div class="slideshow" id="Slideshow-{{ section.id }}" data-arrow="{{ section.settings.arrow }}" data-dots="{{ section.settings.dots }}" data-autoplay="{{ section.settings.autoplay }}" data-speed="{{ section.settings.autoplay_speed }}">
+           
+      {% for block in section.blocks %}
+
+      <div class="slideshow__slide slideshow__slide--{{ block.id }}{% if is_background_video %} slideshow__slide--background-video{% endif %}" {{ block.shopify_attributes }}>
+        {% if block.settings.link != blank %}<a href="{{ block.settings.link }}" class="slideshow__link">{% endif %}
+
+        {% if block.settings.image == blank %}
+        <div class="slideshow__image slideImg-{{block.id}} {{ block.settings.text_align }} lazyload{% unless forloop.first %} lazypreload{% endunless %} js{% if block.settings.mb_image != blank %} small--hide{% endif %}"
+             data-bgset="{% include 'bgset', image: block.settings.image %}" data-sizes="auto" data-parent-fit="contain"
+             style="background-position: {{ block.settings.alignment }}; background-image: url('{{ block.settings.image | img_url: '100x' }}');">
+          {% if block.settings.image == blank %}
+          <div class="placeholder-background">{% capture current %}{% cycle 1, 2 %}{% endcapture %}{{ 'lifestyle-' | append: current | placeholder_svg_tag: 'placeholder-svg' }}</div>
+          {% endif %}
+        </div>
+        {% else %}
+        <div class="slideshow__image slideImg-{{block.id}} {{ block.settings.text_align }} lazyload{% unless forloop.first %} lazypreload{% endunless %} js{% if block.settings.mb_image != blank %} small--hide{% endif %}"
+             data-bgset="{% include 'bgset', image: block.settings.image %}" data-sizes="auto" data-parent-fit="contain"
+             style="background-position: {{ block.settings.alignment }}; background-image: url('{{ block.settings.image | img_url: '100x' }}');">
+        </div>
+        {% if block.settings.mb_image != blank %}
+        <div class="slideshow__image slideImg-{{block.id}} {{ block.settings.text_align }} lazyload{% unless forloop.first %} lazypreload{% endunless %} js medium-up--hide"
+             data-bgset="{% include 'bgset', image: block.settings.mb_image %}" data-sizes="auto" data-parent-fit="contain"
+             style="background-position: {{ block.settings.alignment }};
+                    background-image: url('{{ block.settings.mb_image | img_url: '100x' }}');">
+        </div>
+        {% endif %}
+        {% endif %}
+        <div class="slideshow__text-wrap{% if block.settings.title != blank or block.settings.subheading != blank %} slideshow__overlay{% endif %} {{ block.settings.text_align }} {% if block.type == 'video' %} video-text{% endif %}">
+          <div class="slideshow__text-content">
+            <div class="wrap-caption{% if section.settings.text-align == 'center' %} text-center{% endif%}{% if section.settings.txtanimation %} anim-tru{% endif %} {{ section.settings.animation-style }}">
+              {% unless block.settings.smalltitle == blank %}
+              <p class="mega-small-title heading1-{{block.id}}">{{ block.settings.smalltitle }}</p>
+              {% endunless %}
+
+              {% unless block.settings.title == blank %}
+              <h2 class="h1 mega-title heading2-{{block.id}} slideshow__title{% if settings.link != blank %} slideshow__title--has-link{% endif %}{% if section.settings.text_size == 'large' %} mega-title--large{% endif %}">{{ block.settings.title  }}</h2>
+              {% endunless %}
+              
+              {% unless block.settings.subheading == blank %}
+              <span class="mega-subtitle heading3-{{block.id}} slideshow__subtitle{% if section.settings.text_size == 'large' %} mega-subtitle--large{% endif %}">{{ block.settings.subheading }}</span>
+              {% endunless %}
+              
+              {% unless block.settings.slide_button_text == blank %} 
+              <span class="btnWrap"><span class="btn" >{{ block.settings.slide_button_text }} </span></span>
+              {% endunless %}
+            </div>
+          </div>
+        </div>             
+
+        {% if block.settings.link != blank %}</a>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  {% if section.blocks.size == 0 %}<div class="placeholder-noblocks">{{ 'homepage.onboarding.no_content' | t }}</div>{% endif %}
+</div>
+<style>
+	#Slideshow-{{section.id}} { height:{{section.settings.ds_height}}px; }
+    @media only screen and (min-width:768px) and (max-width: 1024px) { #Slideshow-{{section.id}} { height:{{section.settings.tb_height}}px; } }
+    @media only screen and (max-width:767px) { #Slideshow-{{section.id}} { height:{{section.settings.mb_height}}px; } }
+        
+    {%- for block in section.blocks -%}
+        .heading1-{{block.id}} { color:{{ block.settings.heading1}};}
+        .heading2-{{block.id}} { color:{{ block.settings.heading2}};}
+    	.heading3-{{block.id}} { color:{{ block.settings.heading3}};}
+  		{% if block.type == 'video' %}
+        	{% unless block.settings.video_type == 'background' %}
+            .slideshow__video-control svg path {fill:{{block.settings.playicon_clr }}; }
+            {% endunless %}
+		{% endif %}
+    {%- endfor -%}
+</style>
+{%- endcapture -%}
+{{slideShowSec | strip_newlines | remove: "  " | remove: "	" }}
+
+{% schema %}
+  {
+    "name": "Slideshow",
+    "class": "index-section index-section--flush slideshowOuter",
+    "max_blocks": 4,
+    "settings": [
+	 {
+        "type": "paragraph",      
+        "content": "Set font size and other options from --> Theme Settings --> Fonts, Colors and Styles --> Slideshow "
+      },
+ 	  {
+        "type": "paragraph",      
+        "content": "--"
+      },
+	   {
+		"type":"checkbox",
+		"id":"section_width",
+		"label":"Box Width?",
+		"default": false
+	  },
+	 {
+        "type": "range",
+        "id": "box-width",
+       	"label":"Select Box Width",
+        "default": 1500,
+        "min": 1200,
+        "max": 2200,
+        "step": 100,
+        "unit": "px"
+      },	
+	  {
+            "type": "select",
+            "id": "top-offeset",
+            "label": "Top OffSet",
+            "default": "default",
+            "options": [
+              {
+                "value": "default",
+                "label": "Default"
+              },
+              {
+                "value": "small",
+                "label": "Small"
+              },
+			  {
+                "value": "none",
+                "label": "None"
+              }
+			]
+        }, 	
+		{
+		"type":"checkbox",
+		"id":"snow_effect",
+		"label":"Enable Snow Effect?",
+		"default": false,
+		"info":"For Christmas"
+	   },
+        {
+          "type": "select",
+          "id": "snow_style",
+          "label": "Snow Style",
+          "default": "style1",         
+          "options": [
+            {
+            "value": "style1",
+            "label": "Falling Down"
+            },
+            {
+            "value": "style2",
+            "label": "Falling From Left"
+            }
+            ]
+          },
+	  {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "Auto-rotate slides",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "autoplay_speed",
+        "label": "Change Slides Every",
+        "options": [
+          { "value": "5000", "label": "5 seconds" },
+          { "value": "6000", "label": "6 seconds" },
+          { "value": "7000", "label": "7 seconds" },
+          { "value": "8000", "label": "8 seconds" },
+          { "value": "9000", "label": "9 seconds" },
+          { "value": "10000", "label": "10 seconds" },
+		  { "value": "12000", "label": "12 seconds" },
+		  { "value": "15000", "label": "15 seconds" }
+        ],
+        "default": "7000"
+      },
+	  {
+        "type": "checkbox",
+        "id": "arrow",
+        "label": "Show Next/Previous Arrows?",
+        "default": true
+      },
+	  {
+        "type": "checkbox",
+        "id": "dots",
+        "label": "Show Dotted Navigation?",
+        "default": false
+      },	  
+	    {
+        "type": "checkbox",
+        "id": "txtanimation",
+        "label": "Enable Text Animation",
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "animation-style",
+        "label": "Text Animation Style",
+        "default": "style1",
+        "options": [
+          {
+            "label": "Style1",
+            "value": "style1"
+          },
+          {
+            "label": "Style2",
+            "value": "style2"
+          },
+		  {
+            "label": "Style3",
+            "value": "style3"
+          }   
+        ]
+      },
+	 {
+        "type": "select",
+        "id": "text-align",
+        "label": "Text Alignment",
+        "default": "default",
+        "options": [
+          {
+            "label": "Default",
+            "value": "default"
+          },
+          {
+            "label": "Center",
+            "value": "center"
+          }		 
+        ]
+      },      
+	  {
+		"type":"paragraph",
+		"content":"Section Height ==="
+	  },
+      {
+        "type": "range",
+        "id": "ds_height",
+        "label": "Desktop",
+        "default": 500,
+        "min": 200,
+        "max": 1000,
+        "step": 10
+      },
+      {
+        "type": "range",
+        "id": "tb_height",
+        "label": "Tablet",
+        "default": 350,
+        "min": 200,
+        "max": 1000,
+        "step": 10
+      },
+      {
+        "type": "range",
+        "id": "mb_height",
+        "label": "Mobile",
+        "default": 250,
+        "min": 100,
+        "max": 800,
+        "step": 10
+      },      
+	  {
+		"type":"paragraph",
+		"content":"For Best Resolution recommended image width: 1920px for Desktop & 760px for Mobile. Image height should be as per your selections above."
+	  }
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "name": "Image slide",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          },
+		  {
+            "type": "image_picker",
+            "id": "mb_image",
+            "label": "Mobile Image",
+			"info": "Do not select image here if want to display same image for mobile and desktop"
+          },
+          {
+            "type": "select",
+            "id": "alignment",
+            "label": "Image Alignment",
+            "default": "top",
+            "options": [
+              { "value": "top", "label": "Top" },
+              { "value": "center", "label": "Middle" },
+              { "value": "bottom", "label": "Bottom" }
+            ]
+          },
+          {
+            "type": "text",
+            "id": "smalltitle",
+            "label": "Heading 1",
+            "default": "Small Heading"
+          },
+          {
+              "type": "color",
+              "id": "heading1",
+              "label": "Color",
+              "default": "#000"
+           },
+          {
+            "type": "textarea",
+            "id": "title",
+            "label": "Heading 2",
+            "default": "Large Heading",
+			"info":"Use <strong> your text here</strong> to make headings bold"
+          },
+		  {
+              "type": "color",
+              "id": "heading2",
+              "label": "Color",
+              "default": "#000"
+           },
+          {
+            "type": "textarea",
+            "id": "subheading",
+            "label": "Heading 3",
+            "default": "Tell your brand's story",
+			"info": "Details will be show only in large screen."
+          },
+		 {
+              "type": "color",
+              "id": "heading3",
+              "label": "Color",
+              "default": "#000"
+           },
+		  {
+            "type": "text",
+            "id": "slide_button_text",
+            "label": "Slide Button Text",
+ 			"default":"Shop now"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "Slide Link"
+          },
+          {
+            "type": "select",
+            "id": "text_align",
+            "label": "Text Position",
+            "default": "left",
+			"info": "Text position work only in large screen",
+            "options": [
+              { "label": "Left", "value": "left" },
+ 			  { "label": "Left Bottom", "value": "leftbottom" },
+			  { "label": "Top Center", "value": "topcenter" },
+			  { "label": "Center", "value": "center" },
+              { "label": "Bottom Center", "value": "bottomcenter" },
+			  { "label": "Right Bottom", "value": "rightbottom" },
+              { "label": "Right", "value": "right" }
+            ]
+          }
+        ]
+      }
+    ],
+    "presets": [{
+      "name": "Slideshow",
+      "category": "3. Banners",
+      "settings": {
+        "autoplay": true,
+        "autoplay_speed": "7000"
+      },
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }]
+  }
+{% endschema %}

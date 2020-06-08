@@ -1,0 +1,95 @@
+<!doctype html>
+<!--[if IE 9]> <html class="ie9 no-js" lang="{{ shop.locale }}" {% if settings.rtl %}dir="rtl"{% endif %}> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js" lang="{{ shop.locale }}" {% if settings.rtl %}dir="rtl"{% endif %}> <!--<![endif]-->
+<head>
+  {%- capture seo_title -%}
+    {{page_title}}
+    {%- if current_tags -%}{%- assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}{%- endif -%}
+    {%- if current_page != 1 -%}&ndash; {{ 'general.meta.page' | t: page: current_page }}{%- endif -%}
+    {%- unless page_title contains shop.name -%}&ndash; {{ shop.name }}{%- endunless -%}
+  {%- endcapture -%}
+  
+  {%- capture metaTags -%}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="{{ settings.color_button }}">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="canonical" href="{{ canonical_url }}">
+  	<link rel="preconnect" href="//fonts.shopifycdn.com/" crossorigin>
+    <link rel="preconnect" href="//cdn.shopify.com/" crossorigin>
+    <link rel="preconnect" href="//v.shopify.com/" crossorigin>
+    <link rel="dns-prefetch" href="//{{shop.domain}}" crossorigin>
+  	<link rel="dns-prefetch" href="//{{shop.permanent_domain}}" crossorigin>
+    <link rel="dns-prefetch" href="//cdn.shopify.com" crossorigin>
+    <link rel="dns-prefetch" href="//v.shopify.com" crossorigin>
+    <link rel="dns-prefetch" href="//fonts.shopifycdn.com" crossorigin>
+  	<link rel="preload" as="style" href="{{ 'default.css' | asset_url }}">
+  	<link rel="preload" as="style" href="{{ 'theme.scss.css' | asset_url }}">
+
+    {%- if settings.favicon != blank -%}<link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">{%- endif -%}
+    {%- if settings.favicon_retina != blank and settings.favicon_counter == false -%}<link rel="apple-touch-icon-precomposed" type="image/png" sizes="152x152" href="{{ settings.favicon_retina | img_url: '152x' }}">{%- endif -%}
+
+  	<title>{{ seo_title }}</title>
+  	{%- if page_description -%}<meta name="description" content="{{ page_description | escape }}">{%- endif -%}
+  	{%- include 'social-meta-tags' -%}
+  {%- endcapture -%}
+  {{metaTags | strip_newlines | remove: "  " | remove: "	" }}
+
+  <!-- css -->
+  {{ 'default.css' | asset_url | stylesheet_tag }}
+  {{ 'theme.scss.css' | asset_url | stylesheet_tag }}
+
+  <!-- main js -->
+  <script src="{{ 'jquery.min.js' | asset_url }}"></script>
+  <script>
+    var theme = {
+      strings: {
+        addToCart: {{ 'products.product.add_to_cart' | t | json }}, soldOut: {{ 'products.product.sold_out' | t | json }}, unavailable: {{ 'products.product.unavailable' | t | json }},
+        showMore: {{ 'general.filters.show_more' | t | json }}, showLess: {{ 'general.filters.show_less' | t | json }}
+      },
+      moneyFormat:{{ shop.money_format | json }},currencyFormat:{{ settings.currency_format | json }},shopCurrency:{{ shop.currency | json }},mlcurrency:{{ settings.show_multiple_currencies }},autoCurrencies:{{ settings.auto_currencies }},money_currency_format:{{ shop.money_with_currency_format | strip_html | json }},money_format:{{ shop.money_format | strip_html | json }},
+      ajax_cart:{{settings.ajax_cart }},fixedHeader:{{settings.show_sticky_header }},animation:{{settings.enable_site_animation }},animationMobile:{{settings.site_animation_mobile }},searchresult:{{ 'general.search.all' | t | json }},wlAvailable:{{ 'products.wishlist.available' | t | json }},rtl:{{ settings.rtl }},days:{{ 'date_formats.short_names.days' | t | json }},hours:{{ 'date_formats.short_names.hours' | t | json }},minuts:{{ 'date_formats.short_names.minuts' | t | json }},seconds:{{ 'date_formats.short_names.seconds' | t | json }},
+      {%- if content_for_layout contains 'product-template' -%}sun:{{ 'date_formats.day_names.sunday' | t | json }},mon:{{ 'date_formats.day_names.monday' | t | json }},tue:{{ 'date_formats.day_names.tuesday' | t | json }},wed:{{ 'date_formats.day_names.wednesday' | t | json }},thu:{{ 'date_formats.day_names.thursday' | t | json }},fri:{{ 'date_formats.day_names.friday' | t | json }},sat:{{ 'date_formats.day_names.saturday' | t | json }},jan:{{ 'date_formats.months.jan' | t | json }},feb:{{ 'date_formats.months.feb' | t | json }},mar:{{ 'date_formats.months.mar' | t | json }},apr:{{ 'date_formats.months.apr' | t | json }},may:{{ 'date_formats.months.may' | t | json }},jun:{{ 'date_formats.months.jun' | t | json }},jul:{{ 'date_formats.months.jul' | t | json }},aug:{{ 'date_formats.months.aug' | t | json }},sep:{{ 'date_formats.months.sep' | t | json }},oct:{{ 'date_formats.months.oct' | t | json }},nov:{{ 'date_formats.months.nov' | t | json }},dec:{{ 'date_formats.months.dec' | t | json }},{%- endif -%}
+    }
+    document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+    {%- if content_for_header contains 'design_mode' -%}var Metatheme = {{shop.metafields.mytheme.Avone |json}},thm = 'Avone', shpeml = '{{shop.email}}', dmn = window.location.hostname, designmode = true;{%- else -%}var designmode = false;{%- endif -%}
+  </script>
+
+  <!--[if (lte IE 9) ]>{{ 'match-media.min.js' | asset_url | script_tag }}<![endif]-->
+  <script src="{{ 'vendor.min.js' | asset_url }}" defer="defer"></script>
+  {%- if content_for_layout contains 'data-stellar-background-ratio' -%}<script src="{{ 'stellar.js' | asset_url }}" defer></script>{%- endif -%}
+  <script src="{{ 'option_selection.js' | shopify_asset_url }}" async></script>
+  {{ content_for_header }}
+  {% if settings.show_language %}
+	{% include 'weglot_hreftags' %}
+	{% include 'weglot_switcher' %}
+  {% endif %}
+</head>
+
+<body id="{{ page_title | handle }}" class="template-{{ template | split: '.' | first }} {%- if settings.rtl -%}rtl {%- endif -%}lazyload"
+	{%- if settings.bodybg_img %} data-bgset="{% include 'bgset', image: settings.bodybg_img %}" data-sizes="auto" data-parent-fit="cover" style="background-image:url('{{ settings.bodybg_img | img_url: '50x50' }});"{%- endif -%}>
+	{%- if settings.enable_age_varification -%}{% include 'age-check' %}{%- endif -%}
+   <div class="page-wrapper{% if settings.layout_style == "boxedlayout" %} layout-boxed{% endif %}">      
+  		{%- include 'header' -%}
+    	{%- if settings.top-information-bar -%}{% section 'top-info-panel' %}{%- endif -%}
+		<main id="PageContainer" class="main-content {{ template | split: '.' | first }}" id="MainContent" role="main">{{ content_for_layout }}</main>
+    	{%- section 'footer' -%}
+	</div>
+{% section 'custom-colors' %}
+<!-- js -->
+{%- if template.directory == 'customers' -%}<script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer="defer"></script>{%- endif -%}
+<script src="{{ 'api.jquery.js' | shopify_asset_url }}" defer="defer"></script>
+
+{%- if template == 'cart' -%}<script src="{{ 'shipping-calculator.js' | asset_url }}"></script>{% endif %}
+{%- if content_for_layout contains 'grid-masonary' -%}<script src="{{ 'masonry.js' | asset_url }}" defer="defer"></script>{%- endif -%}
+{%- capture footerSEc -%}{%- section 'footer' -%}{%- endcapture -%}
+{%- if content_for_layout contains 'instafeed' or footerSEc contains 'instafeed' -%}<script src="{{ 'instagramFeed.js' | asset_url }}" defer="defer"></script>{%- endif -%}
+{%- if settings.show_multiple_currencies -%}{%- include 'currencies' -%}{%- endif -%}
+{%- if settings.enable_site_animation -%}<script src="{{ 'wow.min.js' | asset_url }}" defer></script>{%- endif -%}
+<script src="{{ 'theme.min.js' | asset_url }}" defer="defer"></script>
+
+{%- include 'theme-modals' -%}
+{%- if settings.show_sticky_arrow -%}<span id="site-scroll"><i class="ad ad-arw-up" aria-hidden="true"></i></span>{%- endif -%}
+</body>
+</html>
