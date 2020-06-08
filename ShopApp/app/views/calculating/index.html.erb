@@ -1,0 +1,40 @@
+<div class = "container">
+<p>
+    <h2> Test Project </h1> 
+</p>
+<%= form_with(url: "/", method: "get", local: true) do %>
+    <p>
+    <%= label_tag(:start_date, "Start Date:") %>
+    <%= date_field_tag(:start_date) %>
+    </p>
+
+    <p>
+    <%= label_tag(:end_date, "End Date:") %>
+    <%= date_field_tag(:end_date) %>
+    </p>
+
+    <p>
+    <%= label_tag(:daily_cost, "Daily Cost:") %>
+    <%= text_field_tag(:daily_cost) %>
+    </p>
+
+    <p>
+    <%= label_tag(:all_time_period, "All Times Period:") %>
+    <%= select_tag 'all_time_period', options_for_select([['Weekly', 1], ['Monthly', 2]]) %>
+    
+    <p>
+    <%= label_tag(:cost, "Cost:") %>
+    <%= text_field_tag(:cost) %>
+    </p>
+
+    <p>
+    <%= submit_tag("Calc") %>
+    </p>
+
+    <div>
+        <%= @result %>
+    </div>
+    
+<% end %>
+</div>
+
